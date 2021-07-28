@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <title>WOD Tracker</title>
+   
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="text-center">WOD Tracker</h1>
+
+    <div class="card bg-light p-3 m-3">
+        <h2>Add new WOD</h2>
+          <div class="mb-3">
+            <label for="nameform" class="form-label"><strong>Name</strong></label>
+            <input type="text" id="nameform" class="form-control" placeholder="Enter name">
+          </div>
+      
+          <div class="mb-3">
+            <label for="assigneeform" class="form-label"><strong>Assignee</strong></label>
+            <input type="text" id="assigneeform" class="form-control" placeholder="Enter assignee">
+          </div>
+
+          <div class="mb-3">
+            <label for="difficultyform" class="form-label">Select difficulty</label>
+            <select class="form-select" aria-label="Default select example" id="difficultyform">
+              <option selected>Select Difficulty</option>
+              <option value="Easy">Easy</option>
+               <option value="Medium">Medium</option>
+                <option value="Hard">Hard</option>
+            </select> 
+          </div>
+            <button class="btn btn-primary" onclick="addPressed()">Add</button>
+          </div>
+        </div>
+        
+          <div class="container">
+          <div class="card p-3 my-3 bg-light">
+            <h2>List of WODs</h2>
+            <table class="table table-striped table-bordered table-hover mb-3">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Difficulty</th>
+                  <th>Assignee</th>
+                </tr>
+              </thead>
+              <tbody id="tbody">
+                
+              </tbody>
+            </table>
+          </div>
+          </div>
+
+          <div class="container">
+          <div class="card p-3 mt-3" hidden="true" id="card">
+            <h4 id="wodName">Name</h4>
+            <p id="wodAssignee">Assignee</p>
+            <p id="wodDifficulty">Difficulty</p>
+            <p id="wodStatus"></p>
+
+            <div class="row">
+              <div class="col-6">
+                <div class="col-6">
+                 <button class="btn btn-success btn-block text-light" onclick="donePressed()">Mark Done</button>
+              </div>
+              <div class="col-6">
+                 <button class="btn btn-danger btn-block text-light" onclick="deletePressed()">Delete</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        </div>
+
+<script type="text/javascript">
+
+  var selectedWod;
+  var selectedTr;
+  var wods = [];
+
+  if(localStorage.getItem("wods")!=null){
+    wods=JSON.parse(localStorage.getItem("wods"))
+
+    for (var i = 0; i <wods.length; i++){
+      loadData(wods[i]);
+    }
+  }
+
+  function loadData(wod){
+
+    var name = wod.name;
+    var assignee = wod.assignee;
+    var difficulty = wod.difficulty;
+
+    var td1 = document.createElement("td");
+     var td2 = document.createElement("td");
+      var td3 = document.createElement("td");
+        var newTr = document.createElement("tr");
+
+    td1.innerHTML = name;
+     td2.innerHTML = assignee;
+      td3.innerHTML = difficulty;
+
+    newTr.appendChild(td1);
+    newTr.appendChild(td2);
+    newTr.appendChild(td3);
+
+    document.getElementById("tbody").appendChild(newTr);
+
+    newTr.newWod = wod;
+
+    newTr.addEventListener("click", function(evt){
+      document.getElementById("card").removeAttribute("hidden")
+      console.log(evt.currentTarget.newWod);
+
+      selectedWod = evt.currentTarget.newWod;
+      selectedTr = newTr;
+
+
+      document.getElementById("wodName").innerHTML = selectedWod.name;
+       document.getElementById("wodAssignee").innerHTML = selectedWod.assignee;
+        document.getElementById("wodDifficulty").innerHTML = selectedWod.difficulty;
+      
+      if (selectedWod.status){
+        document.getElementById("wodStatus").innerHTML="Done";
+      }
+      else{
+        document.getElementById("wodStatus").innerHTML="Not Done";
+      }
+    })
+
+  }
+
+  function deletePressed(){
+
+    document.getElementById("tbody").removeChild(selectedTr);
+    document.getElementById("card").setAttribute("hidden", true);
+
+    for(var i = 0; i<wods.length; i++){
+      if(wods[i].name == selectedWod.name && wods[i].assignee == selectedWod.assignee && wods[i].difficulty == selectedWod.difficulty ){
+
+          wods.splice(i,1);
+
+          localStorage.setItem("wods", JSON.stringify(wods));
+      }
+    }
+  }
+
+  function donePressed(){
+
+    selectedWod.completed = true;
+    document.getElementById("wodStatus").innerHTML="Done";
+
+    for(var i=0; i<wods.length; i++){
+      if(wods[i].name == selectedWod.name && wods[i].difficulty == selectedWod.difficulty && wods[i].assignee == selectedWod.assignee){
+
+            wods[i].completed = true;
+
+            localStorage.setItem("wods",JSON.stringify(wods));
+          }
+        }
+  }
+
+  function addPressed(){
+
+    var name = document.getElementById("nameform").value;
+    var assignee = document.getElementById("assigneeform").value;
+    var difficulty = document.getElementById("difficultyform").value;
+
+    var newWod = {
+      name : name,
+      assignee : assignee,
+      difficulty : difficulty,
+      status : false
+
+    }
+
+    wods.push(newWod);
+
+    localStorage.setItem("wods", JSON.stringify(wods));
+
+    loadData(newWod);
+  }
+</script>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+  </body>
+</html>
+
+
