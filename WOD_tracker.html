@@ -66,7 +66,6 @@
             <p id="wodStatus"></p>
 
             <div class="row">
-              <div class="col-6">
                 <div class="col-6">
                  <button class="btn btn-success btn-block text-light" onclick="donePressed()">Mark Done</button>
               </div>
@@ -74,7 +73,6 @@
                  <button class="btn btn-danger btn-block text-light" onclick="deletePressed()">Delete</button>
               </div>
             </div>
-          </div>
 
         </div>
         </div>
@@ -124,15 +122,15 @@
       selectedTr = newTr;
 
 
-      document.getElementById("wodName").innerHTML = selectedWod.name;
-       document.getElementById("wodAssignee").innerHTML = selectedWod.assignee;
-        document.getElementById("wodDifficulty").innerHTML = selectedWod.difficulty;
+      document.getElementById("wodName").innerHTML = "Name : " +selectedWod.name;
+       document.getElementById("wodAssignee").innerHTML = "Assignee : " + selectedWod.assignee;
+        document.getElementById("wodDifficulty").innerHTML = "Difficulty : " + selectedWod.difficulty;
       
       if (selectedWod.status){
-        document.getElementById("wodStatus").innerHTML="Done";
+        document.getElementById("wodStatus").innerHTML="Status : Done";
       }
       else{
-        document.getElementById("wodStatus").innerHTML="Not Done";
+        document.getElementById("wodStatus").innerHTML="Status : Not Done";
       }
     })
 
@@ -156,7 +154,7 @@
   function donePressed(){
 
     selectedWod.completed = true;
-    document.getElementById("wodStatus").innerHTML="Done";
+    document.getElementById("wodStatus").innerHTML="Status : Done!";
 
     for(var i=0; i<wods.length; i++){
       if(wods[i].name == selectedWod.name && wods[i].difficulty == selectedWod.difficulty && wods[i].assignee == selectedWod.assignee){
